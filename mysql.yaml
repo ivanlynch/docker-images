@@ -1,17 +1,47 @@
-# Use root/example as user/password credentials
-version: '3.1'
-
+version: '3.3'
 services:
-
   db:
     image: mysql
-    command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: sup3rp4ssw0rd
-
-  adminer:
-    image: adminer
-    restart: always
+      MYSQL_DATABASE: 'db'
+      # So you don't have to use root, but you can if you like
+      MYSQL_USER: 'sup3rUs3r'
+      # You can use whatever password you like
+      MYSQL_PASSWORD: sup3rS3cr3t
+      # Password for root access
+      MYSQL_ROOT_PASSWORD: 'sup3rS3cr3t'
     ports:
-      - 8080:8080
+      # <Port exposed> : <MySQL Port running inside container>
+      - '3306:3306'
+    expose:
+      # Opens port 3306 on the container
+      - '3306'
+      # Where our data will be persisted
+    volumes:
+      - my-db:/var/lib/mysql
+  shadowdb:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'shadowdb'
+      # So you don't have to use root, but you can if you like
+      MYSQL_USER: 'sup3rUs3rPr1sm4'
+      # You can use whatever password you like
+      MYSQL_PASSWORD: sup3rS3cr3tPr1sm4
+      # Password for root access
+      MYSQL_ROOT_PASSWORD: 'sup3rS3cr3tPr1sm4'
+    ports:
+      # <Port exposed> : <MySQL Port running inside container>
+      - '3307:3306'
+    expose:
+      # Opens port 3306 on the container
+      - '3307'
+      # Where our data will be persisted
+    volumes:
+      - shadowdb:/var/lib/mysql
+
+# Names our volume
+volumes:
+  my-db:
+  shadowdb:
